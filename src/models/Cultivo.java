@@ -8,6 +8,9 @@ import java.util.ArrayList;
  * Hereda los atributos comunes desde ElementoAgricola.
  */
 public class Cultivo extends ElementoAgricola {
+    // Identificador único del cultivo
+    private int id;
+
     // Variedad del cultivo, por ejemplo "Premium", "Cherry", etc.
     private String variedad;
 
@@ -21,7 +24,7 @@ public class Cultivo extends ElementoAgricola {
     private ArrayList<Actividad> actividades;
 
     /**
-     * Constructor de Cultivo.
+     * Constructor principal usado en la lógica del programa.
      *
      * @param nombre Nombre del cultivo (ej. "Trigo").
      * @param variedad Tipo o subtipo del cultivo (ej. "Dulce").
@@ -40,21 +43,26 @@ public class Cultivo extends ElementoAgricola {
     }
 
     /**
-     * Agrega una nueva actividad (riego, fertilización, etc.) al cultivo.
+     * Constructor adicional usado por CSVHandler para lectura de archivos.
      *
-     * @param act Actividad que se quiere agregar a la lista.
+     * @param id Identificador único.
+     * @param nombre Nombre del cultivo.
+     * @param variedad Variedad del cultivo.
+     * @param estado Estado actual del cultivo.
+     * @param superficie Superficie sembrada.
      */
-    public void agregarActividad(Actividad act) {
-        actividades.add(act);
+    public Cultivo(int id, String nombre, String variedad, String estado, double superficie) {
+        super(nombre, null, estado); // fechaSiembra se omite
+        this.id = id;
+        this.variedad = variedad;
+        this.superficie = superficie;
+        this.codigoParcela = "";
+        this.actividades = new ArrayList<>();
     }
 
-    /**
-     * Retorna todas las actividades asociadas a este cultivo.
-     *
-     * @return Lista de actividades (ArrayList).
-     */
-    public ArrayList<Actividad> getActividades() {
-        return actividades;
+    // Getter para el id
+    public int getId() {
+        return id;
     }
 
     // Devuelve la variedad del cultivo
@@ -70,6 +78,16 @@ public class Cultivo extends ElementoAgricola {
     // Devuelve el código de la parcela asignada
     public String getCodigoParcela() {
         return codigoParcela;
+    }
+
+    // Retorna todas las actividades asociadas a este cultivo
+    public ArrayList<Actividad> getActividades() {
+        return actividades;
+    }
+
+    // Agrega una nueva actividad (riego, fertilización, etc.) al cultivo
+    public void agregarActividad(Actividad act) {
+        actividades.add(act);
     }
 
     /**
