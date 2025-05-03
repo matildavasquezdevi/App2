@@ -1,4 +1,7 @@
 import java.util.Scanner;
+import java.util.List;
+import io.CSVHandler;
+import models.Cultivo;
 
 public class App2 {
     public static void main(String[] args) {
@@ -6,6 +9,17 @@ public class App2 {
             System.out.println("Uso correcto: java App2 cultivos.csv");
             return;
         }
+
+        // --- BLOQUE TEMPORAL DE PRUEBA DE CSV ---
+        List<Cultivo> cultivos = CSVHandler.leerCultivosDesdeCSV();
+        System.out.println("\nCultivos cargados desde CSV:");
+        for (Cultivo c : cultivos) {
+            System.out.println(c.getId() + " - " + c.getNombre() + " - " + c.getVariedad() + " - " + c.getEstado() + " - " + c.getSuperficie());
+        }
+
+        // Vuelve a escribir el archivo para verificar que todo funcione correctamente
+        CSVHandler.escribirCultivosEnCSV(cultivos);
+        // --- FIN BLOQUE TEMPORAL ---
 
         Scanner scanner = new Scanner(System.in);
 
