@@ -19,7 +19,7 @@ Para compilar y ejecutar el proyecto, sigue estos pasos:
 
 1. Clona el repositorio:
    ```
-   git clone https
+   git clone https://github.com/matildavasquezdevi/App2.git
    ```
 
 2. Navega al directorio del proyecto:
