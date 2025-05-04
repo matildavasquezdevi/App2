@@ -1,6 +1,6 @@
 import java.util.Scanner;
 import java.util.List;
-import io.CSVHandler;
+import CSVHandler;
 import models.Cultivo;
 
 public class App2 {
