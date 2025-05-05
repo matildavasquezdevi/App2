@@ -8,6 +8,7 @@ El proyecto está organizado en los siguientes paquetes:
 
 - **src/models**: Contiene las clases que representan los modelos de datos, como `Cultivo`, `Parcela`, `Actividad` y `ElementoAgricola`.
 - **src/services**: Contiene los servicios que gestionan la lógica de negocio, incluyendo `CultivoService`, `ParcelaService`, `ActividadService` y `ReporteService`.
+- **src/menus**: Contiene los menus que gestionan las funciones.
 - **src**: Contiene la clase principal `App2.java`, que inicia la aplicación.
 
 ## Requisitos
