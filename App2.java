@@ -2,6 +2,10 @@ import java.util.Scanner;
 import java.util.List;
 import io.CSVHandler;
 import models.Cultivo;
+import menus.MenuCultivos;
+import menus.MenuParcelas;
+import menus.MenuActividades;
+import menus.MenuBusquedaReporte;
 
 public class App2 {
     public static void main(String[] args) {
@@ -10,20 +14,12 @@ public class App2 {
             return;
         }
 
-        // --- BLOQUE TEMPORAL DE PRUEBA DE CSV ---
+        // Cargar cultivos desde el CSV
         List<Cultivo> cultivos = CSVHandler.leerCultivosDesdeCSV();
-        System.out.println("\nCultivos cargados desde CSV:");
-        for (Cultivo c : cultivos) {
-            System.out.println(c.getId() + " - " + c.getNombre() + " - " + c.getVariedad() + " - " + c.getEstado() + " - " + c.getSuperficie());
-        }
-
-        // Vuelve a escribir el archivo para verificar que todo funcione correctamente
-        CSVHandler.escribirCultivosEnCSV(cultivos);
-        // --- FIN BLOQUE TEMPORAL ---
 
         Scanner scanner = new Scanner(System.in);
-
         boolean salir = false;
+
         while (!salir) {
             System.out.println("\n=== Menú Principal ===");
             System.out.println("1. Gestión de Cultivos");
@@ -38,19 +34,20 @@ public class App2 {
 
             switch (opcionPrincipal) {
                 case 1:
-                    menuCultivos(scanner);
+                    MenuCultivos.mostrarMenu(scanner, cultivos);
                     break;
                 case 2:
-                    menuParcelas(scanner);
+                    MenuParcelas.mostrarMenu(scanner, cultivos);
                     break;
                 case 3:
-                    menuActividades(scanner);
+                    MenuActividades.mostrarMenu(scanner, cultivos);
                     break;
                 case 4:
-                    menuBusquedaReporte(scanner);
+                    MenuBusquedaReporte.mostrarMenu(scanner, cultivos);
                     break;
                 case 5:
                     System.out.println("Guardando datos y cerrando el programa...");
+                    CSVHandler.escribirCultivosEnCSV(cultivos);
                     salir = true;
                     break;
                 default:
@@ -59,22 +56,5 @@ public class App2 {
         }
 
         scanner.close();
-    }
-
-    // Funciones mínimas para que compile
-    public static void menuCultivos(Scanner scanner) {
-        System.out.println("Funcionalidad de gestión de cultivos aún no implementada.");
-    }
-
-    public static void menuParcelas(Scanner scanner) {
-        System.out.println("Funcionalidad de gestión de parcelas aún no implementada.");
-    }
-
-    public static void menuActividades(Scanner scanner) {
-        System.out.println("Funcionalidad de gestión de actividades aún no implementada.");
-    }
-
-    public static void menuBusquedaReporte(Scanner scanner) {
-        System.out.println("Funcionalidad de búsqueda y reportes aún no implementada.");
     }
 }
