@@ -17,10 +17,15 @@ public class CSVHandler {
         try (BufferedReader br = new BufferedReader(new FileReader(CSV_PATH))) {
             String linea;
             while ((linea = br.readLine()) != null) {
-                if (!linea.startsWith("Cultivo")) continue; // ignorar encabezados o líneas vacías
+                if (!linea.startsWith("Cultivo")) continue;
 
-                // Separar por coma considerando comillas
-                String[] partes = linea.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+                // Separar los 8 componentes esperados (excepto actividades, que se parsean por separado)
+                int idx1 = linea.indexOf("[");
+                String datosPrincipales = linea.substring(0, idx1 - 1);
+                String actividadesStr = linea.substring(idx1);
+
+                String[] partes = datosPrincipales.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+                if (partes.length < 7) continue;
 
                 String nombre = partes[1].replace("\"", "");
                 String variedad = partes[2].replace("\"", "");
@@ -28,23 +33,21 @@ public class CSVHandler {
                 String codigoParcela = partes[4].replace("\"", "");
                 LocalDate fechaSiembra = LocalDate.parse(partes[5].replace("\"", ""));
                 String estado = partes[6].replace("\"", "");
-                String actividadesRaw = partes[7].trim();
 
-                Cultivo cultivo = new Cultivo(nombre, variedad, superficie, codigoParcela, fechaSiembra, estado);
+                Cultivo cultivo = new Cultivo(
+                        cultivos.size() + 1, nombre, variedad, estado,
+                        superficie, codigoParcela, fechaSiembra
+                );
 
-                // Parsear actividades tipo ["RIEGO:2023-03-10","FERTILIZACION:2023-03-20"]
-                actividadesRaw = actividadesRaw.replace("[", "").replace("]", "");
-                String[] actividades = actividadesRaw.split(",");
-
-                for (String actividadTxt : actividades) {
-                    actividadTxt = actividadTxt.replace("\"", "").trim();
-                    if (actividadTxt.isEmpty()) continue;
-                    String[] actPartes = actividadTxt.split(":");
-                    if (actPartes.length == 2) {
-                        String tipo = actPartes[0];
-                        LocalDate fecha = LocalDate.parse(actPartes[1]);
-                        Actividad act = new Actividad(tipo, fecha, "PENDIENTE");
-                        cultivo.agregarActividad(act);
+                // Parsear actividades tipo: ["RIEGO:2023-03-10","FERTILIZACION:2023-03-20"]
+                actividadesStr = actividadesStr.replaceAll("[\\[\\]\"]", "");
+                String[] actividades = actividadesStr.split(",");
+                for (String act : actividades) {
+                    if (act.contains(":")) {
+                        String[] a = act.split(":");
+                        String tipo = a[0];
+                        LocalDate fecha = LocalDate.parse(a[1]);
+                        cultivo.agregarActividad(new Actividad(tipo, fecha, "PENDIENTE"));
                     }
                 }
 
@@ -65,23 +68,16 @@ public class CSVHandler {
                 sb.append("\"").append(c.getVariedad()).append("\",");
                 sb.append(c.getSuperficie()).append(",");
                 sb.append("\"").append(c.getCodigoParcela()).append("\",");
-                sb.append("\"").append(c.getFecha().toString()).append("\",");
+                sb.append("\"").append(c.getFecha()).append("\",");
                 sb.append("\"").append(c.getEstado()).append("\",");
 
-                // Serializar actividades
-                sb.append("[");
-                var actividades = c.getActividades();
-                for (int i = 0; i < actividades.size(); i++) {
-                    sb.append("\"")
-                      .append(actividades.get(i).getNombre())
-                      .append(":")
-                      .append(actividades.get(i).getFecha())
-                      .append("\"");
-                    if (i < actividades.size() - 1) {
-                        sb.append(",");
-                    }
+                // Serializar actividades: ["TIPO:FECHA","TIPO2:FECHA2"]
+                List<Actividad> actividades = c.getActividades();
+                List<String> actStr = new ArrayList<>();
+                for (Actividad a : actividades) {
+                    actStr.add("\"" + a.getNombre() + ":" + a.getFecha().toString() + "\"");
                 }
-                sb.append("]");
+                sb.append("[").append(String.join(",", actStr)).append("]");
 
                 bw.write(sb.toString());
                 bw.newLine();
