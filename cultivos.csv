@@ -1,5 +1,5 @@
 id,nombre,variedad,estado,superficie
-1,Maíz,Variedad Dulce,ACTIVO,32.5
-2,Trigo,Variedad Premium,ACTIVO,45.2
+1,Maíz,Dulce,ACTIVO,32.5
+2,Trigo,Premium,ACTIVO,45.2
 3,Tomate,Cherry,EN_RIESGO,10.0
 4,Lechuga,Romana,COSECHADO,8.5
