@@ -8,23 +8,14 @@ import java.util.ArrayList;
  * Hereda los atributos comunes desde ElementoAgricola.
  */
 public class Cultivo extends ElementoAgricola {
-    // Identificador único del cultivo
     private int id;
-
-    // Variedad del cultivo, por ejemplo "Premium", "Cherry", etc.
     private String variedad;
-
-    // Superficie sembrada en hectáreas
     private double superficie;
-
-    // Código de la parcela donde se encuentra el cultivo
     private String codigoParcela;
-
-    // Lista de actividades relacionadas al cultivo (riego, cosecha, etc.)
     private ArrayList<Actividad> actividades;
 
     /**
-     * Constructor principal para crear cultivo desde App.
+     * Constructor principal usado en la lógica del programa.
      */
     public Cultivo(String nombre, String variedad, double superficie, String codigoParcela,
                    LocalDate fechaSiembra, String estado) {
@@ -36,24 +27,20 @@ public class Cultivo extends ElementoAgricola {
     }
 
     /**
-     * Constructor secundario para uso desde CSVHandler.
+     * Constructor usado por CSVHandler para lectura.
      */
-    public Cultivo(int id, String nombre, String variedad, String estado, double superficie) {
-        super(nombre, null, estado);
+    public Cultivo(int id, String nombre, String variedad, String estado, double superficie,
+                   String codigoParcela, LocalDate fechaSiembra) {
+        super(nombre, fechaSiembra, estado);
         this.id = id;
         this.variedad = variedad;
         this.superficie = superficie;
-        this.codigoParcela = "";
+        this.codigoParcela = codigoParcela;
         this.actividades = new ArrayList<>();
     }
 
-    // Agrega una nueva actividad
-    public void agregarActividad(Actividad act) {
-        actividades.add(act);
-    }
-
-    public ArrayList<Actividad> getActividades() {
-        return actividades;
+    public int getId() {
+        return id;
     }
 
     public String getVariedad() {
@@ -68,20 +55,20 @@ public class Cultivo extends ElementoAgricola {
         return codigoParcela;
     }
 
-    public int getId() {
-        return id;
+    public ArrayList<Actividad> getActividades() {
+        return actividades;
     }
 
-    public void setCodigoParcela(String codigo) {
-        this.codigoParcela = codigo;
+    public void agregarActividad(Actividad act) {
+        actividades.add(act);
     }
 
-    public void setFechaSiembra(LocalDate fecha) {
-        this.fecha = fecha;
+    public void setCodigoParcela(String codigoParcela) {
+        this.codigoParcela = codigoParcela;
     }
 
     @Override
     public String obtenerDescripcion() {
-        return nombre + " (" + variedad + ") - " + estado;
+        return nombre + " (" + variedad + ") - " + estado + " - " + codigoParcela;
     }
 }
