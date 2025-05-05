@@ -29,7 +29,7 @@ Para compilar y ejecutar el proyecto, sigue estos pasos:
 
 3. Compila el código fuente:
    ```
-   javac -d bin -sourcepath src src/*.java src/models/*.java src/services/*.java
+   javac -d bin -sourcepath src src/*.java src/models/*.java src/menus/*.java src/services/*.java  
    ```
 
    Esto compilará los archivos `.java` y colocará los `.class` en el directorio `bin`.
