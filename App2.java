@@ -51,7 +51,6 @@ public class App2 {
                     break;
                 case 5:
                     System.out.println("Guardando datos y cerrando el programa...");
-                    // Aquí después pondremos guardar los cambios al CSV
                     salir = true;
                     break;
                 default:
@@ -60,5 +59,22 @@ public class App2 {
         }
 
         scanner.close();
+    }
+
+    // Funciones mínimas para que compile
+    public static void menuCultivos(Scanner scanner) {
+        System.out.println("Funcionalidad de gestión de cultivos aún no implementada.");
+    }
+
+    public static void menuParcelas(Scanner scanner) {
+        System.out.println("Funcionalidad de gestión de parcelas aún no implementada.");
+    }
+
+    public static void menuActividades(Scanner scanner) {
+        System.out.println("Funcionalidad de gestión de actividades aún no implementada.");
+    }
+
+    public static void menuBusquedaReporte(Scanner scanner) {
+        System.out.println("Funcionalidad de búsqueda y reportes aún no implementada.");
     }
 }
