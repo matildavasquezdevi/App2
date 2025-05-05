@@ -1,10 +1,11 @@
-import java.util.Scanner;
 import java.util.List;
+import java.util.Scanner;
+
 import io.CSVHandler;
 import models.Cultivo;
 import menus.MenuCultivos;
-import menus.MenuParcelas;
 import menus.MenuActividades;
+import menus.MenuParcelas;
 import menus.MenuBusquedaReporte;
 
 public class App2 {
@@ -14,7 +15,7 @@ public class App2 {
             return;
         }
 
-        // Cargar cultivos desde el CSV
+        // Cargar datos del CSV
         List<Cultivo> cultivos = CSVHandler.leerCultivosDesdeCSV();
 
         Scanner scanner = new Scanner(System.in);
@@ -29,10 +30,10 @@ public class App2 {
             System.out.println("5. Salir");
             System.out.print("Selecciona una opción: ");
 
-            int opcionPrincipal = scanner.nextInt();
+            int opcion = scanner.nextInt();
             scanner.nextLine(); // limpiar buffer
 
-            switch (opcionPrincipal) {
+            switch (opcion) {
                 case 1:
                     MenuCultivos.mostrarMenu(scanner, cultivos);
                     break;
@@ -46,12 +47,12 @@ public class App2 {
                     MenuBusquedaReporte.mostrarMenu(scanner, cultivos);
                     break;
                 case 5:
-                    System.out.println("Guardando datos y cerrando el programa...");
                     CSVHandler.escribirCultivosEnCSV(cultivos);
+                    System.out.println("Datos guardados. Cerrando...");
                     salir = true;
                     break;
                 default:
-                    System.out.println("Opción inválida. Intenta de nuevo.");
+                    System.out.println("Opción inválida.");
             }
         }
 
