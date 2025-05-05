@@ -16,45 +16,40 @@ public class CSVHandler {
         List<Cultivo> cultivos = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(CSV_PATH))) {
             String linea;
-            int idCounter = 1;
-
             while ((linea = br.readLine()) != null) {
-                if (!linea.startsWith("Cultivo")) continue;
+                if (!linea.startsWith("Cultivo")) continue; // ignorar encabezados o líneas vacías
 
-                String[] campos = dividirLineaCSV(linea);
-                if (campos.length < 8) continue;
+                // Separar por coma considerando comillas
+                String[] partes = linea.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
 
-                String nombre = campos[1];
-                String variedad = campos[2];
-                double superficie = Double.parseDouble(campos[3]);
-                String codigoParcela = campos[4];
-                LocalDate fechaSiembra = LocalDate.parse(campos[5]);
-                String estado = campos[6];
-                String listaActividades = campos[7];
+                String nombre = partes[1].replace("\"", "");
+                String variedad = partes[2].replace("\"", "");
+                double superficie = Double.parseDouble(partes[3]);
+                String codigoParcela = partes[4].replace("\"", "");
+                LocalDate fechaSiembra = LocalDate.parse(partes[5].replace("\"", ""));
+                String estado = partes[6].replace("\"", "");
+                String actividadesRaw = partes[7].trim();
 
-                Cultivo cultivo = new Cultivo(idCounter++, nombre, variedad, estado, superficie);
-                cultivo.setCodigoParcela(codigoParcela);
-                cultivo.setFechaSiembra(fechaSiembra);
+                Cultivo cultivo = new Cultivo(nombre, variedad, superficie, codigoParcela, fechaSiembra, estado);
 
-                // Parsear actividades tipo ["RIEGO:2023-03-10","COSECHA:2023-04-15"]
-                if (!listaActividades.equals("[]")) {
-                    listaActividades = listaActividades.substring(1, listaActividades.length() - 1); // quitar corchetes
-                    String[] actividades = listaActividades.split("\",\"");
+                // Parsear actividades tipo ["RIEGO:2023-03-10","FERTILIZACION:2023-03-20"]
+                actividadesRaw = actividadesRaw.replace("[", "").replace("]", "");
+                String[] actividades = actividadesRaw.split(",");
 
-                    for (String act : actividades) {
-                        act = act.replace("\"", "").trim();
-                        if (act.contains(":")) {
-                            String[] partes = act.split(":");
-                            String tipo = partes[0];
-                            LocalDate fecha = LocalDate.parse(partes[1]);
-                            cultivo.agregarActividad(new Actividad(tipo, fecha, "PENDIENTE"));
-                        }
+                for (String actividadTxt : actividades) {
+                    actividadTxt = actividadTxt.replace("\"", "").trim();
+                    if (actividadTxt.isEmpty()) continue;
+                    String[] actPartes = actividadTxt.split(":");
+                    if (actPartes.length == 2) {
+                        String tipo = actPartes[0];
+                        LocalDate fecha = LocalDate.parse(actPartes[1]);
+                        Actividad act = new Actividad(tipo, fecha, "PENDIENTE");
+                        cultivo.agregarActividad(act);
                     }
                 }
 
                 cultivos.add(cultivo);
             }
-
         } catch (IOException e) {
             System.err.println("Error al leer el archivo CSV: " + e.getMessage());
         }
@@ -64,53 +59,35 @@ public class CSVHandler {
     public static void escribirCultivosEnCSV(List<Cultivo> cultivos) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(CSV_PATH))) {
             for (Cultivo c : cultivos) {
-                StringBuilder linea = new StringBuilder();
-                linea.append("Cultivo").append(",")
-                        .append("\"").append(c.getNombre()).append("\",")
-                        .append("\"").append(c.getVariedad()).append("\",")
-                        .append(c.getSuperficie()).append(",")
-                        .append("\"").append(c.getCodigoParcela()).append("\",")
-                        .append("\"").append(c.getFechaSiembra()).append("\",")
-                        .append("\"").append(c.getEstado()).append("\",");
+                StringBuilder sb = new StringBuilder();
+                sb.append("Cultivo,");
+                sb.append("\"").append(c.getNombre()).append("\",");
+                sb.append("\"").append(c.getVariedad()).append("\",");
+                sb.append(c.getSuperficie()).append(",");
+                sb.append("\"").append(c.getCodigoParcela()).append("\",");
+                sb.append("\"").append(c.getFecha().toString()).append("\",");
+                sb.append("\"").append(c.getEstado()).append("\",");
 
-                // Actividades
-                linea.append("[");
-                List<Actividad> acts = c.getActividades();
-                for (int i = 0; i < acts.size(); i++) {
-                    Actividad a = acts.get(i);
-                    linea.append("\"").append(a.getNombre()).append(":").append(a.getFecha()).append("\"");
-                    if (i < acts.size() - 1) linea.append(",");
+                // Serializar actividades
+                sb.append("[");
+                var actividades = c.getActividades();
+                for (int i = 0; i < actividades.size(); i++) {
+                    sb.append("\"")
+                      .append(actividades.get(i).getNombre())
+                      .append(":")
+                      .append(actividades.get(i).getFecha())
+                      .append("\"");
+                    if (i < actividades.size() - 1) {
+                        sb.append(",");
+                    }
                 }
-                linea.append("]");
+                sb.append("]");
 
-                bw.write(linea.toString());
+                bw.write(sb.toString());
                 bw.newLine();
             }
-
         } catch (IOException e) {
             System.err.println("Error al escribir el archivo CSV: " + e.getMessage());
         }
-    }
-
-    // Divide una línea del CSV personalizada (con comillas y lista final)
-    private static String[] dividirLineaCSV(String linea) {
-        List<String> partes = new ArrayList<>();
-        StringBuilder buffer = new StringBuilder();
-        boolean dentroComillas = false;
-
-        for (char c : linea.toCharArray()) {
-            if (c == '"') {
-                dentroComillas = !dentroComillas;
-                continue;
-            }
-            if (c == ',' && !dentroComillas) {
-                partes.add(buffer.toString().trim());
-                buffer.setLength(0);
-            } else {
-                buffer.append(c);
-            }
-        }
-        partes.add(buffer.toString().trim()); // último campo
-        return partes.toArray(new String[0]);
     }
 }
