@@ -1,6 +1,7 @@
 package services;
 
 import models.Cultivo;
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -8,21 +9,22 @@ public class CultivoService {
 
     private List<Cultivo> cultivos;
 
-    public CultivoService() {
-        this.cultivos = new ArrayList<>();
+    // El constructor ahora recibe la lista original (compartida con el main)
+    public CultivoService(List<Cultivo> cultivos) {
+        this.cultivos = cultivos;
     }
 
-    /** Crea/agrega un nuevo cultivo */
+    /** Agrega un nuevo cultivo */
     public void agregarCultivo(Cultivo cultivo) {
         cultivos.add(cultivo);
     }
 
-    /** Retorna la lista completa de cultivos */
+    /** Devuelve la lista de cultivos */
     public List<Cultivo> listarCultivos() {
         return cultivos;
     }
 
-    /** Busca un cultivo por nombre (exacto, case-insensitive) */
+    /** Busca un cultivo por nombre (case-insensitive) */
     public Cultivo buscarCultivo(String nombre) {
         for (Cultivo c : cultivos) {
             if (c.getNombre().equalsIgnoreCase(nombre)) {
@@ -33,16 +35,14 @@ public class CultivoService {
     }
 
     /**
-     * Edita un cultivo existente.
-     * @param nombreOriginal nombre del cultivo a modificar
-     * @param cultivoActualizado datos nuevos (se preservan actividades antiguas)
-     * @return true si se encontró y actualizó
+     * Edita un cultivo por nombre.
+     * Reemplaza todos los datos excepto las actividades ya registradas.
      */
     public boolean editarCultivo(String nombreOriginal, Cultivo cultivoActualizado) {
         for (int i = 0; i < cultivos.size(); i++) {
-            Cultivo antiguo = cultivos.get(i);
-            if (antiguo.getNombre().equalsIgnoreCase(nombreOriginal)) {
-                cultivoActualizado.getActividades().addAll(antiguo.getActividades());
+            Cultivo actual = cultivos.get(i);
+            if (actual.getNombre().equalsIgnoreCase(nombreOriginal)) {
+                cultivoActualizado.getActividades().addAll(actual.getActividades());
                 cultivos.set(i, cultivoActualizado);
                 return true;
             }
@@ -51,13 +51,11 @@ public class CultivoService {
     }
 
     /**
-     * Elimina un cultivo (solo si no tiene actividades pendientes).
-     * @return true si se eliminó
+     * Elimina un cultivo solo si no tiene actividades pendientes
      */
     public boolean eliminarCultivo(String nombre) {
-        return cultivos.removeIf(c ->
-            c.getNombre().equalsIgnoreCase(nombre)
-            && c.getActividades().isEmpty()
+        return cultivos.removeIf(c -> 
+            c.getNombre().equalsIgnoreCase(nombre) && c.getActividades().isEmpty()
         );
     }
 }
