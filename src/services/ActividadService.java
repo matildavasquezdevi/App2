@@ -47,10 +47,6 @@ public class ActividadService {
         int idx = lista.indexOf(actividad);
         if (idx >= 0) {
             Actividad act = lista.get(idx);
-            Actividad done = new Actividad(act.getNombre(), act.getFecha(), "COMPLETADA");
-            lista.set(idx, done);
-            return true;
-        }
-        return false;
+#--
     }
 }
