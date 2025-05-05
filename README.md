@@ -29,14 +29,14 @@ Para compilar y ejecutar el proyecto, sigue estos pasos:
 
 3. Compila el código fuente:
    ```
-   javac -d bin src/*.java
+   javac -cp src -d bin src/models/*.java src/services/*.java App2.java
    ```
 
    Esto compilará los archivos `.java` y colocará los `.class` en el directorio `bin`.
 
 4. Ejecuta la aplicación desde el directorio `bin`:
    ```
-   java -cp bin App2 ../data/cultivos.csv
+   java -cp bin App2 cultivos.csv
    ```
 
    Asegúrate de que el archivo `cultivos.csv` esté ubicado en el directorio del proyecto.
